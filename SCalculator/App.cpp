@@ -11,6 +11,7 @@ bool App::OnInit()
 	mainFrame->SetIcon(icon);
 	mainFrame->SetClientSize(200, 300);
 	mainFrame->Center();
+	mainFrame->SetWindowStyle(mainFrame->GetWindowStyle() & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX));
 	mainFrame->Show();
 	return true;
 }
