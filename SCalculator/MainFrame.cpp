@@ -47,7 +47,20 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 	if (button)
 	{
 		wxString label = button->GetLabel();
-		if (label == '+' || label == '-' || label == '*' || label == '/')
+		if (label == '<' || label == '.' && temp.empty())
+		{
+			event.Skip();
+			return;
+		}
+		else if (label == 'C')
+		{
+			previous->Clear();
+			res->Clear();
+			temp.clear();
+			op_count = 0;
+			result = 0.0;
+		}
+		else if (label == '+' || label == '-' || label == '*' || label == '/')
 		{
 			if (temp.empty())
 			{
@@ -56,7 +69,7 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 			}
 			else if (op_count == 1)
 			{
-				if (temp.front() == '+' || temp.front() == '-' || temp.front() == '*' || temp.front() == '/')
+				if (temp.back() == '+' || temp.back() == '-' || temp.back() == '*' || temp.back() == '/')
 				{
 					event.Skip();
 					return;
@@ -82,7 +95,7 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 		{
 			if (temp.empty() 
 				|| temp.back() == '+' || temp.back() == '-' || temp.back() == '*' || temp.back() == '/'
-				|| temp.front() == '+' || temp.front() == '-' || temp.front() == '*' || temp.front() == '/')
+				|| temp.front() == '+' || temp.front() == '-' && temp.empty() || temp.front() == '*' || temp.front() == '/')
 			{
 				event.Skip();
 				return;
@@ -95,11 +108,6 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 			res->AppendText(wxString::Format(wxT("%f"), result));
 			temp.clear();
 			temp += std::to_string(result);
-		}
-		else if (label == '<' || label == 'C')
-		{
-			event.Skip();
-			return;
 		}
 		else
 		{
@@ -119,8 +127,11 @@ double MainFrame::OperateNums()
 			second += temp[a];
 		if (temp[a] == '+' || temp[a] == '-' || temp[a] == '*' || temp[a] == '/')
 		{
-			op = temp[a];
-			op_count = 0;
+			if (a != 0 && temp[0] == '-' || temp[0] != '-')
+			{
+				op = temp[a];
+				op_count = 0;
+			}
 		}
 		if (op_count == 1)
 			first += temp[a];
@@ -144,5 +155,5 @@ double MainFrame::OperateNums()
 			result = 0;
 		break;
 	}
-	return std::round(result);
+	return result;
 }
