@@ -28,12 +28,13 @@ public:
 	};
 	// funcs
 	MainFrame(const wxString& title);
-	void OnButtonClick(wxCommandEvent& event);
+	void ButtonHandler(wxCommandEvent& event);
 	double OperateNums();
 	// vars
 	wxTextCtrl* res;
 	wxTextCtrl* previous;
 	int op_count{};
+	int dec_points_count{};
 	double result{};
 	std::string temp;
 };

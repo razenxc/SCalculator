@@ -5,7 +5,7 @@ wxIMPLEMENT_APP(App);
 
 bool App::OnInit()
 {
-	MainFrame* mainFrame = new MainFrame("SCalculator");
+	MainFrame* mainFrame = new MainFrame("SCalc");
 	wxIcon icon;
 	icon.LoadFile(wxT("resources/scicon.ico"), wxBITMAP_TYPE_ICO);
 	mainFrame->SetIcon(icon);

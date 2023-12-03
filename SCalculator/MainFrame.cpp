@@ -14,33 +14,40 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 	wxButton* a = new wxButton(panel, wxID_ANY, "", wxPoint(0, 45), wxSize(50, 50));
 	wxButton* b = new wxButton(panel, wxID_ANY, "", wxPoint(50, 45), wxSize(50, 50));
 	wxButton* clear = new wxButton(panel, wxID_ANY, "C", wxPoint(100, 45), wxSize(50, 50));
+	clear->SetBackgroundColour(wxColor(138, 138, 138));
 	wxButton* backspace = new wxButton(panel, wxID_ANY, "<", wxPoint(150, 45), wxSize(50, 50));
+	backspace->SetBackgroundColour(wxColor(138, 138, 138));
 
 	wxButton* seven = new wxButton(panel, id_seven, "7", wxPoint(0, 95), wxSize(50, 50));
 	wxButton* eight = new wxButton(panel, id_eight, "8", wxPoint(50, 95), wxSize(50, 50));
 	wxButton* nine = new wxButton(panel, id_nine, "9", wxPoint(100, 95), wxSize(50, 50));
 	wxButton* divide = new wxButton(panel, id_divide, "/", wxPoint(150, 95), wxSize(50, 50));
+	divide->SetBackgroundColour(wxColor(138, 138, 138));
 
 	wxButton* four = new wxButton(panel, id_four, "4", wxPoint(0, 145), wxSize(50, 50));
 	wxButton* five = new wxButton(panel, id_five, "5", wxPoint(50, 145), wxSize(50, 50));
 	wxButton* six = new wxButton(panel, id_six, "6", wxPoint(100, 145), wxSize(50, 50));
 	wxButton* multiply = new wxButton(panel, id_multiply, "*", wxPoint(150, 145), wxSize(50, 50));
+	multiply->SetBackgroundColour(wxColor(138, 138, 138));
 
 	wxButton* one = new wxButton(panel, id_one, "1", wxPoint(0, 195), wxSize(50, 50));
 	wxButton* two = new wxButton(panel, id_two, "2", wxPoint(50, 195), wxSize(50, 50));
 	wxButton* three = new wxButton(panel, id_three, "3", wxPoint(100, 195), wxSize(50, 50));
 	wxButton* minus = new wxButton(panel, id_minus, "-", wxPoint(150, 195), wxSize(50, 50));
+	minus->SetBackgroundColour(wxColor(138, 138, 138));
 
 	wxButton* zero = new wxButton(panel, id_zero, "0", wxPoint(0, 245), wxSize(50, 50));
 	wxButton* dot = new wxButton(panel, id_dot, ".", wxPoint(50, 245), wxSize(50, 50));
+	dot->SetBackgroundColour(wxColor(138, 138, 138));
 	wxButton* result = new wxButton(panel, id_result, "=", wxPoint(100, 245), wxSize(50, 50));
-	result->SetBackgroundColour(wxColor(79, 189, 160));
+	result->SetBackgroundColour(wxColor(138, 138, 138));
 	wxButton* plus = new wxButton(panel, id_plus, "+", wxPoint(150, 245), wxSize(50, 50));
+	plus->SetBackgroundColour(wxColor(138, 138, 138));
 
-	panel->Bind(wxEVT_BUTTON, &MainFrame::OnButtonClick, this);
+	panel->Bind(wxEVT_BUTTON, &MainFrame::ButtonHandler, this);
 }
 
-void MainFrame::OnButtonClick(wxCommandEvent& event)
+void MainFrame::ButtonHandler(wxCommandEvent& event)
 {
 	int bid = event.GetId();
 	wxButton* button = dynamic_cast<wxButton*>(FindWindow(bid));
@@ -59,6 +66,7 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 			temp.clear();
 			op_count = 0;
 			result = 0.0;
+			dec_points_count = 0;
 		}
 		else if (label == '+' || label == '-' || label == '*' || label == '/')
 		{
@@ -86,6 +94,7 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 			} 
 			else
 			{
+				dec_points_count = 0;
 				op_count++;
 				res->AppendText(label);
 				temp += label;
@@ -100,7 +109,6 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 				event.Skip();
 				return;
 			}
-
 			previous->Clear();
 			previous->AppendText(temp + '=');
 			result = OperateNums();
@@ -109,8 +117,22 @@ void MainFrame::OnButtonClick(wxCommandEvent& event)
 			temp.clear();
 			temp += std::to_string(result);
 		}
+		else if (label == '.' && !temp.empty() && temp.back() == '.')
+		{
+			event.Skip();
+			return;
+		}
 		else
 		{
+			if (label == '.' && dec_points_count == 0)
+			{
+				dec_points_count = 1;
+			}
+			else if (label == '.' && dec_points_count == 1)
+			{
+				event.Skip();
+				return;
+			}
 			res->AppendText(label);
 			temp += label;
 		}
